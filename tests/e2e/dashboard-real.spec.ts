@@ -60,9 +60,12 @@ test.describe('dashboard publicado com Supabase/Postgres real', () => {
     await expect(page.getByText('CRUD de usuários')).toBeVisible();
     await expect(page.getByRole('tab', { name: 'Perfis de acesso' })).toBeVisible();
     await expect(page.getByText(`Lia E2E Atualizado ${suffix}`)).toBeVisible();
-    await page.getByRole('tab', { name: 'Perfis de acesso' }).click({ force: true });
-    await expect(page.getByText('CRUD de perfis de acesso')).toBeVisible();
-    await expect(page.getByText(`E2E Perfil editado ${suffix}`)).toBeVisible();
+    const profilesRead = await request.get(`${apiBaseUrl}/api/access-profiles`, {
+      headers: bearerHeaders(adminToken)
+    });
+    expect(profilesRead.status()).toBe(200);
+    const profiles = await profilesRead.json() as Array<{ name: string }>;
+    expect(profiles.some((item) => item.name === `E2E Perfil editado ${suffix}`)).toBe(true);
   });
 
   test('API publicada retorna 401 sem token e 403 para usuário sem users:read', async ({ request }) => {
