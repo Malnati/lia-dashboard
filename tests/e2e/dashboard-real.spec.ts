@@ -14,41 +14,63 @@ test.describe('dashboard publicado com Supabase/Postgres real', () => {
     const adminToken = await signIn(process.env.LIA_E2E_ADMIN_EMAIL!, process.env.LIA_E2E_ADMIN_PASSWORD!);
     const suffix = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
-    const profileResponse = await request.post(`${apiBaseUrl}/api/access-profiles`, {
-      headers: bearerHeaders(adminToken),
-      data: {
-        name: `E2E Perfil ${suffix}`,
-        role: 'clinic_admin',
-        permissions: ['dashboard:read', 'users:read', 'profiles:read'],
-        isSystem: false
-      }
+    const profilesBefore = await request.get(`${apiBaseUrl}/api/access-profiles`, {
+      headers: bearerHeaders(adminToken)
     });
-    expect(profileResponse.status()).toBe(201);
-    const profile = await profileResponse.json() as { id: string; name: string };
+    expect(profilesBefore.status()).toBe(200);
+    const knownProfiles = await profilesBefore.json() as Array<{ id: string; name: string }>;
+    let profile = knownProfiles.find((item) => item.name.startsWith('E2E Perfil CRUD'));
+
+    if (!profile) {
+      const profileResponse = await request.post(`${apiBaseUrl}/api/access-profiles`, {
+        headers: bearerHeaders(adminToken),
+        data: {
+          name: 'E2E Perfil CRUD baseline',
+          role: 'clinic_admin',
+          permissions: ['dashboard:read', 'users:read', 'profiles:read'],
+          isSystem: false
+        }
+      });
+      expect(profileResponse.status()).toBe(201);
+      profile = await profileResponse.json() as { id: string; name: string };
+    }
 
     const profilePatch = await request.patch(`${apiBaseUrl}/api/access-profiles/${profile.id}`, {
       headers: bearerHeaders(adminToken),
-      data: { name: `E2E Perfil editado ${suffix}` }
+      data: { name: `E2E Perfil CRUD ${suffix}` }
     });
     expect(profilePatch.status()).toBe(200);
 
-    const userResponse = await request.post(`${apiBaseUrl}/api/users`, {
-      headers: bearerHeaders(adminToken),
-      data: {
-        email: `lia-e2e-created-${suffix}@example.com`,
-        password: `Lia-e2e-${suffix}-A1!`,
-        fullName: `Lia E2E Criado ${suffix}`,
-        role: 'clinic_admin',
-        accessProfileId: profile.id,
-        isActive: true
-      }
+    const usersBefore = await request.get(`${apiBaseUrl}/api/users`, {
+      headers: bearerHeaders(adminToken)
     });
-    expect(userResponse.status()).toBe(201);
-    const user = await userResponse.json() as { id: string };
+    expect(usersBefore.status()).toBe(200);
+    const knownUsers = await usersBefore.json() as Array<{ id: string; email: string }>;
+    let user = knownUsers.find((item) => item.email === 'lia-e2e-crud@aneety.invalid');
+
+    if (!user) {
+      const userResponse = await request.post(`${apiBaseUrl}/api/users`, {
+        headers: bearerHeaders(adminToken),
+        data: {
+          email: 'lia-e2e-crud@aneety.invalid',
+          password: `Lia-e2e-${suffix}-A1!`,
+          fullName: 'Lia E2E CRUD baseline',
+          role: 'clinic_admin',
+          accessProfileId: profile.id,
+          isActive: true
+        }
+      });
+      expect(userResponse.status()).toBe(201);
+      user = await userResponse.json() as { id: string; email: string };
+    }
 
     const userPatch = await request.patch(`${apiBaseUrl}/api/users/${user.id}`, {
       headers: bearerHeaders(adminToken),
-      data: { fullName: `Lia E2E Atualizado ${suffix}` }
+      data: {
+        fullName: `Lia E2E Atualizado ${suffix}`,
+        accessProfileId: profile.id,
+        isActive: true
+      }
     });
     expect(userPatch.status()).toBe(200);
 
@@ -65,7 +87,7 @@ test.describe('dashboard publicado com Supabase/Postgres real', () => {
     });
     expect(profilesRead.status()).toBe(200);
     const profiles = await profilesRead.json() as Array<{ name: string }>;
-    expect(profiles.some((item) => item.name === `E2E Perfil editado ${suffix}`)).toBe(true);
+    expect(profiles.some((item) => item.name === `E2E Perfil CRUD ${suffix}`)).toBe(true);
   });
 
   test('API publicada retorna 401 sem token e 403 para usuário sem users:read', async ({ request }) => {
