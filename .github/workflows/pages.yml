@@ -21,7 +21,8 @@ jobs:
       VITE_API_URL: https://api.aneety.com
       VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
       VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
-      LIA_E2E_ENABLED: ${{ secrets.LIA_E2E_ADMIN_EMAIL != '' && secrets.LIA_E2E_ADMIN_PASSWORD != '' && secrets.LIA_E2E_LIMITED_EMAIL != '' && secrets.LIA_E2E_LIMITED_PASSWORD != '' && secrets.VITE_SUPABASE_URL != '' && secrets.VITE_SUPABASE_PUBLISHABLE_KEY != '' }}
+      LIA_E2E_ALLOW_LEGACY_PROVIDER_AUTH: ${{ vars.LIA_E2E_ALLOW_LEGACY_PROVIDER_AUTH }}
+      LIA_E2E_ENABLED: ${{ vars.LIA_E2E_ALLOW_LEGACY_PROVIDER_AUTH == '1' && secrets.LIA_E2E_ADMIN_EMAIL != '' && secrets.LIA_E2E_ADMIN_PASSWORD != '' && secrets.LIA_E2E_LIMITED_EMAIL != '' && secrets.LIA_E2E_LIMITED_PASSWORD != '' && secrets.VITE_SUPABASE_URL != '' && secrets.VITE_SUPABASE_PUBLISHABLE_KEY != '' }}
       LIA_E2E_ADMIN_EMAIL: ${{ secrets.LIA_E2E_ADMIN_EMAIL }}
       LIA_E2E_ADMIN_PASSWORD: ${{ secrets.LIA_E2E_ADMIN_PASSWORD }}
       LIA_E2E_LIMITED_EMAIL: ${{ secrets.LIA_E2E_LIMITED_EMAIL }}
@@ -47,6 +48,9 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy dist --project-name=lia-dashboard --branch=main
+      - name: Report skipped legacy provider-auth dashboard E2E
+        if: ${{ env.CLOUDFLARE_API_TOKEN != '' && env.CLOUDFLARE_ACCOUNT_ID != '' && env.LIA_E2E_ALLOW_LEGACY_PROVIDER_AUTH != '1' }}
+        run: echo "::warning::Skipping legacy provider-auth dashboard E2E. REQ.md now requires database-modeled Lia auth via /api/auth/*; replace this gate when the new E2E exists."
       - name: Install Playwright Chromium
         if: ${{ env.LIA_E2E_ENABLED == 'true' }}
         run: pnpm exec playwright install --with-deps chromium
