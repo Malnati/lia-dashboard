@@ -77,7 +77,7 @@ Variáveis necessárias para seed/teste local e GitHub Actions:
 - `LIA_E2E_LIMITED_EMAIL`
 - `LIA_E2E_LIMITED_PASSWORD`
 
-No GitHub, os quatro `LIA_E2E_*` ficam em secrets do repositório e habilitam o passo `pnpm test:e2e` após o deploy Cloudflare Pages.
+No GitHub, os quatro `LIA_E2E_*` ficam em secrets do repositório. O E2E publicado legado que ainda depende de autenticação por provedor externo só roda quando `LIA_E2E_ALLOW_LEGACY_PROVIDER_AUTH=1` estiver definido em variables. Enquanto a API `/api/auth/*` modelada no banco não existir, esse E2E legado fica bloqueado por contrato e deve ser substituído, não tratado como aceite.
 
 ## Design system
 
