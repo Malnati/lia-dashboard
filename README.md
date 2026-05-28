@@ -1,5 +1,7 @@
 # lia-dashboard
 
+> **Status histórico:** este repositório preserva dashboard histórico do MVP Lia como fonte de aprendizado, evidência e referência. A nova plataforma nasce na organização [Aneety](https://github.com/Aneety), com documentação canônica em [Aneety/.github/docs](https://github.com/Aneety/.github/tree/main/docs) e orquestrador limpo em [Aneety/ai](https://github.com/Aneety/ai). Não use este repositório como contrato futuro de implementação.
+
 Administrativo para consultórios, clínicas e bureau, incluindo CRUD usuários/perfis.
 
 ## URL pública alvo
