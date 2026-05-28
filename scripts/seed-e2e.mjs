@@ -63,7 +63,14 @@ const adminProfile = await upsertOne('access_profiles', {
     'users:write',
     'profiles:read',
     'profiles:write',
-    'tenants:read'
+    'tenants:read',
+    'orders:read',
+    'orders:write',
+    'checkpoints:write',
+    'attachments:read',
+    'attachments:write',
+    'payments:read',
+    'payments:write'
   ],
   is_system: true
 }, 'tenant_id,name');
