@@ -13,6 +13,7 @@
     "deploy:cloudflare": "pnpm build && pnpm dlx wrangler@latest pages deploy dist --project-name=lia-dashboard --branch=main"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.106.2",
     "@tailwindcss/vite": "latest",
     "@vitejs/plugin-react": "latest",
     "class-variance-authority": "latest",

@@ -17,14 +17,19 @@ https://dashboard.aneety.com/
 
 ## Fluxo principal
 
-- Login Supabase Auth.
-- CRUD de usuários e perfis de acesso.
-- Associação usuário, perfil e tenant.
-- Configuração white-label e métricas por tenant.
+- Login Supabase Auth com `@supabase/supabase-js`.
+- CRUD de usuários e perfis de acesso via `https://api.aneety.com/api/users` e `/api/access-profiles`.
+- Associação usuário, perfil e tenant retornada pelo Worker conforme JWT Supabase.
+- Status ativo/inativo de usuário e permissões do perfil editáveis pela API real.
+- Configuração white-label e métricas por tenant seguem como próxima etapa.
 
 ## Status
 
-Scaffold React/Vite com baseline shadcn/ui inicial. Fluxos funcionais serão ampliados após estabilização de Auth, API e massa de teste Supabase.
+Dashboard React/Vite com shadcn/ui e integração inicial real com Supabase Auth + Worker/Hono. A tela não usa dados mock; quando não há sessão ou permissão, mostra erro real da API (`401`/`403`).
+
+## Screenshot
+
+![Lia Dashboard com login Supabase Auth e CRUD users/profiles via Worker](docs/screenshots/lia-dashboard.png)
 
 ## Deploy Cloudflare Pages Free
 
@@ -36,6 +41,14 @@ pnpm deploy:cloudflare
 ```
 
 Projeto Cloudflare Pages esperado: `lia-dashboard`, com deploy do diretório `dist`.
+
+Variáveis públicas de build esperadas no GitHub/Cloudflare Pages:
+
+- `VITE_API_URL=https://api.aneety.com`
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_PUBLISHABLE_KEY`
+
+Não configurar `SUPABASE_SERVICE_ROLE_KEY` em frontend/Pages; ela permanece somente no Worker `lia-backend`.
 
 ## Design system
 
