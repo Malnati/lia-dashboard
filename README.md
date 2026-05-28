@@ -48,7 +48,30 @@ Variáveis públicas de build esperadas no GitHub/Cloudflare Pages:
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_PUBLISHABLE_KEY`
 
-Não configurar `SUPABASE_SERVICE_ROLE_KEY` em frontend/Pages; ela permanece somente no Worker `lia-backend`.
+Não configurar `SUPABASE_SERVICE_ROLE_KEY` em frontend/Pages; ela permanece somente no Worker `lia-backend` e em scripts locais de seed E2E.
+
+## E2E publicado
+
+O E2E do dashboard roda contra `https://dashboard.aneety.com/` e `https://api.aneety.com`; nunca localhost. Ele cobre login Supabase, CRUD real de perfis/usuários pelo Worker e respostas `401`/`403`.
+
+Scripts:
+
+```bash
+pnpm seed:e2e
+pnpm test:e2e
+```
+
+Variáveis necessárias para seed/teste local e GitHub Actions:
+
+- `VITE_SUPABASE_URL` ou `SUPABASE_PROJECT_URL`
+- `VITE_SUPABASE_PUBLISHABLE_KEY` ou `SUPABASE_PUBLISHABLE_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY` somente para `pnpm seed:e2e`; nunca no build/Pages
+- `LIA_E2E_ADMIN_EMAIL`
+- `LIA_E2E_ADMIN_PASSWORD`
+- `LIA_E2E_LIMITED_EMAIL`
+- `LIA_E2E_LIMITED_PASSWORD`
+
+No GitHub, os quatro `LIA_E2E_*` ficam em secrets do repositório e habilitam o passo `pnpm test:e2e` após o deploy Cloudflare Pages.
 
 ## Design system
 

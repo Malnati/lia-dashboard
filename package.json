@@ -10,7 +10,9 @@
     "test": "tsc -p tsconfig.app.json --noEmit",
     "build": "tsc -p tsconfig.app.json && vite build",
     "preview": "vite preview --host 0.0.0.0",
-    "deploy:cloudflare": "pnpm build && pnpm dlx wrangler@latest pages deploy dist --project-name=lia-dashboard --branch=main"
+    "deploy:cloudflare": "pnpm build && pnpm dlx wrangler@latest pages deploy dist --project-name=lia-dashboard --branch=main",
+    "seed:e2e": "node scripts/seed-e2e.mjs",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.106.2",
@@ -31,6 +33,7 @@
     "vite": "latest"
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest"
