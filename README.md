@@ -54,6 +54,8 @@ Não configurar `SUPABASE_SERVICE_ROLE_KEY` em frontend/Pages; ela permanece som
 
 O E2E do dashboard roda contra `https://dashboard.aneety.com/` e `https://api.aneety.com`; nunca localhost. Ele cobre login Supabase, CRUD real de perfis/usuários pelo Worker e respostas `401`/`403`.
 
+O seed E2E também prepara o perfil `E2E Admin` para a cobertura publicada da API em `lia-backend`, incluindo permissões de pedidos, checkpoints, anexos e pagamentos. O perfil limitado continua sem `users:read` e sem `orders:read` para validar `403`.
+
 Scripts:
 
 ```bash
