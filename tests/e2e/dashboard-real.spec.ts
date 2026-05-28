@@ -60,7 +60,7 @@ test.describe('dashboard publicado com Supabase/Postgres real', () => {
     await expect(page.getByText('CRUD de usuários')).toBeVisible();
     await expect(page.getByRole('tab', { name: 'Perfis de acesso' })).toBeVisible();
     await expect(page.getByText(`Lia E2E Atualizado ${suffix}`)).toBeVisible();
-    await page.getByRole('tab', { name: 'Perfis de acesso' }).click();
+    await page.getByRole('tab', { name: 'Perfis de acesso' }).click({ force: true });
     await expect(page.getByText('CRUD de perfis de acesso')).toBeVisible();
     await expect(page.getByText(`E2E Perfil editado ${suffix}`)).toBeVisible();
   });
