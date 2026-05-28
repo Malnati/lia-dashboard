@@ -21,6 +21,12 @@ jobs:
       VITE_API_URL: https://api.aneety.com
       VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
       VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+      LIA_E2E_ENABLED: ${{ secrets.LIA_E2E_ADMIN_EMAIL != '' && secrets.LIA_E2E_ADMIN_PASSWORD != '' && secrets.LIA_E2E_LIMITED_EMAIL != '' && secrets.LIA_E2E_LIMITED_PASSWORD != '' && secrets.VITE_SUPABASE_URL != '' && secrets.VITE_SUPABASE_PUBLISHABLE_KEY != '' }}
+      LIA_E2E_ADMIN_EMAIL: ${{ secrets.LIA_E2E_ADMIN_EMAIL }}
+      LIA_E2E_ADMIN_PASSWORD: ${{ secrets.LIA_E2E_ADMIN_PASSWORD }}
+      LIA_E2E_LIMITED_EMAIL: ${{ secrets.LIA_E2E_LIMITED_EMAIL }}
+      LIA_E2E_LIMITED_PASSWORD: ${{ secrets.LIA_E2E_LIMITED_PASSWORD }}
+      PLAYWRIGHT_DASHBOARD_URL: https://dashboard.aneety.com/
     steps:
       - uses: actions/checkout@v6
       - uses: pnpm/action-setup@v6
@@ -41,3 +47,9 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy dist --project-name=lia-dashboard --branch=main
+      - name: Install Playwright Chromium
+        if: ${{ env.LIA_E2E_ENABLED == 'true' }}
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Run published dashboard E2E
+        if: ${{ env.LIA_E2E_ENABLED == 'true' }}
+        run: pnpm test:e2e
